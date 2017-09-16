@@ -1,8 +1,0 @@
-# nullglob
-https://www.cyberciti.biz/faq/bash-shell-check-for-any-mp3-files-in-directory/
-
-shopt -s nullglob # enable 
-shopt -u nullglob # disable
-
-#date formatting
-https://www.cyberciti.biz/faq/linux-unix-formatting-dates-for-display/
