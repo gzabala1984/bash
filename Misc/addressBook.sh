@@ -133,6 +133,68 @@ case "${CHOICE}" in
    ;;
  4)
    echo "Update"
+   clear
+   while TRUE
+   do
+   read -p "Enter a \"Keyword\" to search for an entry you want to UPDATE: " SEARCH
+   grep -i "${SEARCH}" ${FILE} >  ${TEMPFILE}
+   RECORD_COUNT=$(cat ${TEMPFILE} | wc -l)
+
+   # if record_count is more than 1, then ask if user wants to delete all entries found by SEARCH
+     if [[ "${RECORD_COUNT}" -gt 1 ]]; then
+         echo "Multiple Entries found!  Please narrow down your SEARCH to a specific entry."
+         display ${TEMPFILE}
+         echo
+     elif [[ "${RECORD_COUNT}" -eq 0 ]]; then
+         echo "No entries found!  Please retry searching."
+     else
+         display ${TEMPFILE}
+         read -p "Do you want to UPDATE the above entry? (Y/N) " UPDATE
+         case "${UPDATE}" in
+             Y|y|Yes|YES|yes)
+               grep -iv "${SEARCH}" ${FILE} >  ${TEMPFILE2}
+               #mv ${TEMPFILE2}  ${FILE}
+               OLD_NAME=$(cat ${TEMPFILE} |cut -d ':' -f1)
+               OLD_NUM=$(cat ${TEMPFILE} |cut -d ':' -f2)
+               OLD_EMAIL=$(cat ${TEMPFILE} |cut -d ':' -f3)
+               OLD_ADD=$(cat ${TEMPFILE} |cut -d ':' -f4)
+
+               read -p "Name    [ ${OLD_NAME} ] " NEW_NAME
+               read -p "Phone   [ ${OLD_NUM} ] " NEW_NUM
+               read -p "Email   [ ${OLD_EMAIL} ] " NEW_EMAIL
+               read -p "Address [ ${OLD_ADD} ] " NEW_ADD
+
+               if [[ ! -z "${NEW_NAME}" ]]; then
+                  sed -i '' "s/${OLD_NAME}/${NEW_NAME}/g" ${TEMPFILE}
+               fi
+
+               if [[ ! -z "${NEW_NUM}" ]]; then
+                  sed -i '' "s/${OLD_NUM}/${NEW_NUM}/g" ${TEMPFILE}
+               fi
+
+               if [[ ! -z "${NEW_EMAIL}" ]]; then
+                  sed -i '' "s/${OLD_EMAIL}/${NEW_EMAIL}/g" ${TEMPFILE}
+               fi
+
+               if [[ ! -z "${NEW_ADD}" ]]; then
+                  sed -i '' "s/${OLD_ADD}/${NEW_ADD}/g" ${TEMPFILE}
+               fi
+
+               echo
+               display ${TEMPFILE}
+               echo "Record Updated!"
+               break
+               ;;
+            N|n|No|NO|no)
+               break
+               ;;
+                       *)
+               echo "Invalid response."
+               echo
+               ;;
+          esac
+      fi
+    done
    ;;
  5)
    echo "Quit"
