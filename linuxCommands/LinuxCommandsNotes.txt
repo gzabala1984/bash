@@ -1,0 +1,129 @@
+# find
+
+find directory-list search-criteria action
+
+e.g. criteria
+-name finds files by name
+-iname finds files by name, ignoring case
+-type finds files by their type, "d" for directory, "f" for ordinary file, "l"
+for link
+-perm finds files by permissions
+-inum finds files by inode number
+-group finds files by owned by a user
+-user by a user
+-size by size
+
+
+e.g. action
+
+by default just displays files (or same as -print)
+
+-ls to show long listing (i.e. ls -lids command)
+-exec rm {} \;   removes selected files
+-exec ls {} \;   list of selected files
+-exec file {} \; will run file command on selected files
+
+samples:
+#backs up all selected files
+find Course -name "*cpp" -exec cp {} {}.bkup \;
+
+# interactive
+find Course -name "*cpp" -ok cp {} {}.bkup \;
+
+
+#Negate any option
+just add !
+
+e.g find /home ! -type d
+    find /home ! -name "my*"
+
+# AND
+  find /home -name "*cpp"  -perm 766   (or use -a but it's not needed by default)
+
+ # OR
+  find /home -name "my*" -o perm 755
+
+
+#Search by size
+-size n
+-size -n (less than n)
+-size +n (greater than n)
+
+k- Kilobyte M-Megabyte G-Gigabyte
+
+
+#Search By Time
+A. Modification Time
+-mmin n (find files that were modified exactly n minutes ago)
+-mtime n (find files that were modified exactly n days ago (n*24 hrs))
+
+B. Access Time
+-amin n (find files that were accessed exactly n minutes ago)
+-atime n (find files that were accessed exactly n days ago (n*24 hrs))
+
+note: + and - can be used to find files older than or newer than
+
+or you may use "-newer"
+e.g. find /home -newer data.txt
+
+
+#locate: faster than find, since it uses database rather than actual FS, data not real time
+e.g locate student
+    locate -i student
+
+###############################################
+syntax:
+grep pattern filename
+
+grep phone data.txt
+
+-i ignore case
+-v invert Selection
+-n show line numbers
+-c count numbers of lines that contain pattern
+-l list filenames where pattern occurs
+-e specify more than one pattern
+   e.g. grep -e "hello" -e "hi" test.txt
+-f specify patters in a file
+-r recursively search in directories
+-h to hide the filenames
+
+note: if search pattern has space, need to enclose it with quotes ""
+      or if using *, need to enclose it with quotes or always search with quotes
+
+
+#############################################
+Regular Expressions
+
+. - matches any single character
+    e.g. grep m.t filename
+
+#Character Classes (i.e using [ ])
+   e.g. grep m[ao]t filename
+
+^ - use to match any single character "except"
+   e.g [^abcd] matches any single character except a,b,c or d
+
+[A-Z]  matches any single character that is a capital letter
+[^A-Z] matches any single character that is NOT a capital letter
+[1-9]  matches any single character that is a digit
+*      matches zero or more occurences of the previous character
+       e.g. t* means tt tt tttttt or not occur at all
+            abt*cd   matches abdc abtcd abttcd abtttcd
+            [A-Z]*  means zero or more occurrences of capital letters
+            .*      matches anything
+               e.g. k.*m string that starts with k and ends with m
+
+#Anchor Characters
+^ beginning of the line
+$ end of the lineno
+
+grep ^phone filename
+grep phone$ filename
+
+Samples:
+a. search for 3-character strings that starts with letter
+   grep "t.." file1
+
+b. 4 character word that starts with a Capital letter and ends with a digit
+   grep "[A-Z]..[0-9]" file1
